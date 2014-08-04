@@ -26,12 +26,12 @@ public class Blackjack
 			System.out.println( "***********************************************" );
 			do
 			{
-				System.out.println( "How much do you put down (Min: $1 Max: $50)? " );
+				System.out.println( "How much do you put down (Min: $5 Max: $100, increments of 5)? " );
 				System.out.print( "> $" );
 				wager = keyboard.nextInt();
-				if ( wager < 1 || wager > 50 || wager > wallet )
+				if ( wager < 1 || wager > 100 || wager > wallet || wager % 5 != 0)
 					System.out.println( "You cannot bet $" + wager + ". Please try again." );
-			} while ( wager < 1 || wager > 50 || wager > wallet );
+			} while ( wager < 1 || wager > 100 || wager > wallet || wager % 5 != 0);
 			
 			
 			player_card1 = 2 + r.nextInt(10);
@@ -43,11 +43,12 @@ public class Blackjack
 			
 			
 			// Display initial dealing
-			System.out.println( "You get a " + player_card1 + " and a " + player_card2 + "." );
+			System.out.println( "\nYou get a " + player_card1 + " and a " + player_card2 + "." );
 			System.out.println( "Your total is " + player_total + ".\n" );
 			System.out.println( "The dealer has a " + dealer_card1 + " showing, and a hidden card." );
 			System.out.println( "His total is hidden, too.\n" );
 			
+			// Player's turn
 			do
 			{
 				System.out.print( "Would you like to \"hit\" or \"stay\"? " );
@@ -62,8 +63,10 @@ public class Blackjack
 				}
 			} while ( player_total <= 21 && (! choice.equals("stay") ) );
 			
+			// Dealer's turn does not play if Player busts
 			if ( player_total <= 21 )
 			{
+				System.out.println( "\n******************" );
 				System.out.println( "Okay, dealer's turn." );
 				System.out.println( "His hidden card was a " + dealer_card2 + "." );
 				System.out.println( "His total was " + dealer_total + ".\n" );
@@ -104,7 +107,9 @@ public class Blackjack
 						wallet += wager;
 					}
 					else if ( player_total == dealer_total )
+					{
 						System.out.println( "You Drew." );
+					}
 					else
 					{
 						System.out.println( "you lose" );
@@ -121,6 +126,11 @@ public class Blackjack
 			{
 				System.out.println( "you lose" );
 				wallet -= wager;
+			}
+			if ( wallet <= 0 )
+			{
+				System.out.println( "\nYou've run out of money. Better luck next time!" );
+				break;
 			}
 			
 			System.out.println( "\nYou now have $" + wallet );
