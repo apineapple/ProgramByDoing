@@ -1,7 +1,5 @@
 public class BlackjackPlayer extends CardPlayer {
-	private int wallet;
-	String name;
-	
+	private int wallet;	
 	
 	BlackjackPlayer(String n) {
 		this.wallet = 500;
