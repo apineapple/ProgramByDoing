@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class BlackjackRunner{
+public class Blackjack{
 	
 	
 	public static void main( String[] args ) {
@@ -124,17 +124,17 @@ public class BlackjackRunner{
 		d.shuffle();
 		
 // Testing win logic
-			dealer.hand.add(new Card("8", "S", 8));
-			dealer.hand.add(new Card("J", "S", 10));
-			p.hand.add(new Card("9", "S", 9));
-			p.hand.add(new Card("J", "S", 10));
+// 			dealer.hand.add(new Card("8", "S", 8));
+// 			dealer.hand.add(new Card("J", "S", 10));
+// 			p.hand.add(new Card("9", "S", 9));
+// 			p.hand.add(new Card("J", "S", 10));
 
 		// Deals 2 cards from top of deck to the players
-// 		for (i = 0; i < 2; i++ )
-// 			dealer.hand.add(d.dealCard());
-// 	
-// 		for (i = 0; i < 2; i++ )
-// 			p.hand.add(d.dealCard());
+		for (i = 0; i < 2; i++ )
+			dealer.hand.add(d.dealCard());
+	
+		for (i = 0; i < 2; i++ )
+			p.hand.add(d.dealCard());
 
 		p.showHandAndTotal();
 		System.out.println( dealer.name + " has [" + dealer.hand.get(0) + ", **]" );

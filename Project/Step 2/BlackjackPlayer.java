@@ -8,7 +8,7 @@ public class BlackjackPlayer extends CardPlayer {
 		this.name = n;
 	}
 
-// Testing			
+// Testing findTotal to make sure A scales between 1 and 11			
 // 	public static void main( String[] args ) {
 // 		BlackjackPlayer test1 = new BlackjackPlayer("nick");
 // 		test1.hand.add(new Card("A", "S", 11));
