@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Blackjack{
 	
@@ -13,7 +14,7 @@ public class Blackjack{
 		Card c;
 		int user_total, dealer_total;
 		int bet_multiplier;
-
+		
 		
 		System.out.println( "Welcome to Blackjack\n" );
 // 		System.out.print( "What is your name? \n> " );
@@ -25,23 +26,16 @@ public class Blackjack{
 		user_total = user.findTotal();
 		dealer_total = dealer.findTotal();
 		
-		// NOT DRY CODE YET until replay loop finished
-		if ( checkForBJ(user_total) && ! checkForBJ(dealer_total) ) {
-			System.out.println( "You got Blackjack!" );
-			bet_multiplier = checkForWin( user_total, dealer_total );	
-			System.out.println ( bet_multiplier );	
+		// Check to see if either player received Blackjack		
+		bet_multiplier = checkForBJ(user_total, dealer_total);
+		if ( bet_multiplier != 2 ) {
+			dealer.showHandAndTotal();
+			d = finishRound( d, user, dealer );
 			System.exit(0);
-		} else if ( checkForBJ(user_total) && checkForBJ(dealer_total) ) {
-			System.out.println( "You both got Blackjack." );		
-			bet_multiplier = checkForWin( user_total, dealer_total );
-			System.out.println ( bet_multiplier );
-			System.exit(0);
-		} else if ( checkForBJ(dealer_total) ) {
-			System.out.println( "Dealer got Blackjack" );		
-			bet_multiplier = checkForWin( user_total, dealer_total );
-			System.out.println ( bet_multiplier );
-			System.exit(0);
+		} else {
+			bet_multiplier = 0;
 		}
+			
 	
 		// player's turn
 		System.out.println( "\n*****************\n** " + user.name + "'s turn **\n*****************\n" );
@@ -91,9 +85,11 @@ public class Blackjack{
 					
 		System.out.println( dealer.name + " ended the round with " + dealer_total + ".\n" );
 		
+		// Determine the winner and reload the deck
 		bet_multiplier = checkForWin( user_total, dealer_total );
 		System.out.println( bet_multiplier );
-		
+		d = finishRound( d, user, dealer );
+		System.out.println ( d.cards + "\ndeck size: " + d.cards.size() );	
 		
 
 
@@ -110,19 +106,19 @@ public class Blackjack{
 		d.shuffle();
 		
 // Testing win logic
-			dealer.hand.add(new Card("A", "S", 10));
-			dealer.hand.add(new Card("J", "S", 10));
-			p.hand.add(new Card("A", "S", 11));
-			p.hand.add(new Card("J", "S", 10));
+// 			dealer.hand.add(new Card("A", "S", 11));
+// 			dealer.hand.add(new Card("J", "S", 10));
+// 			p.hand.add(new Card("A", "S", 11));
+// 			p.hand.add(new Card("J", "S", 10));
 
 		// Deals 2 cards from top of deck to the players
-// 		for (i = 0; i < 2; i++ )
-// 			dealer.hand.add(d.dealCard()); 	
-// 		for (i = 0; i < 2; i++ )
-// 			p.hand.add(d.dealCard());
+		for (i = 0; i < 2; i++ )
+			dealer.hand.add(d.dealCard()); 	
+		for (i = 0; i < 2; i++ )
+			p.hand.add(d.dealCard());
 
 		p.showHandAndTotal();
-		System.out.println( "\n=-=-=-=-=-=-=-=-=-=-=--=-=\n" + dealer.name + " has [" + dealer.hand.get(0) + ", **]" );
+		System.out.println( "\n=-=-=-=-=-=-=-=-=-=-=--=-=\n\n" + dealer.name + " has [" + dealer.hand.get(0) + ", **]" );
 		System.out.println( dealer.name + "'s total is hidden.\n" );
 // Testing BJ game logic
 // 		dealer.showHandAndTotal();
@@ -132,9 +128,25 @@ public class Blackjack{
 			
 	}
 	
-	public static Boolean checkForBJ(int score) {	
-		return (  score == 21 );
+// 	public static Boolean checkForBJ(int score) {	
+// 		return (  score == 21 );
+// 	}
+	
+	public static int checkForBJ(int u_total, int d_total) {	
+		if ( u_total == 21 && d_total != 21 ) {
+			System.out.println( "You got Blackjack! You win this round.\n" );
+			return 1;
+		} else if ( u_total == 21 && d_total == 21 ) {
+			System.out.println( "You both got Blackjack. The round is a draw.\n" );		
+			return 0;
+		} else if ( d_total == 21 ) {
+			System.out.println( "Dealer got Blackjack. You lose this round.\n" );		
+			return -1;
+		} else {
+			return 2;
+		}
 	}
+
 	
 	public static int checkForWin(int u_total, int d_total) {
 		if ( u_total <= 21 ) {
@@ -159,5 +171,23 @@ public class Blackjack{
 		}
 	}
 	
+	public static Deck finishRound( Deck d, BlackjackPlayer u, BlackjackPlayer dealer ) {
+		ArrayList<Card> clean_up = new ArrayList<Card>();
+		Card c;
+		
+		clean_up = u.clearHand();
+		while ( clean_up.size() > 0 ) {
+			c = clean_up.remove(0);
+			d.cards.add(c);
+		}
+		clean_up = dealer.clearHand();
+		while ( clean_up.size() > 0 ) {
+			c = clean_up.remove(0);
+			d.cards.add(c);
+		}
+				
+		
+		return d;
+	}
 
 }
