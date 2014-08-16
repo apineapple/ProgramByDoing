@@ -22,12 +22,12 @@ public class Blackjack{
  		user_name = kb.nextLine();
 		BlackjackPlayer user = new BlackjackPlayer(user_name);
 		
-		while ( replay ) {
+		while ( replay && user.canPlay() ) {
 		
-			System.out.println( "******************\n*** Betting Time ***\n******************\n" );
+			System.out.println( "\n********************\n*** Betting Time ***\n********************\n" );
 			wager = user.makeBet();
 					
-			System.out.println( "******************\n*** New Round ***\n******************\n" );
+			System.out.println( "\n******************\n*** New Round ***\n******************\n" );
 			initializeRound(d, user, dealer);
 		
 			user_total = user.findTotal();
@@ -46,16 +46,24 @@ public class Blackjack{
 				pay_out_multiplier = 0;
 			}
 			
-	
+			// To slow the text bombardment
+			System.out.println( "Press enter to start your turn..." );
+			kb.nextLine();
+			
 			// player's turn
 			System.out.println( "\n*****************\n** " + user.name + "'s turn **\n*****************\n" );
 			user_total = userTurn(d, user);		
 		
 			System.out.println( "\n" + user.name + " ends the round with " + user_total + ".\n" );
 
+
 			// dealer's turn
 			// dealer will only play if user has not busted			
 			if ( user_total <= 21 ) {
+				// To slow the text bombardment
+				System.out.println( "On to the dealer's turn..." );
+				kb.nextLine();
+
 				System.out.println( "*******************\n** " + dealer.name + "'s turn **\n*******************\n" );
 				dealer_total = dealerTurn( d, dealer, user_total );
 			}
@@ -71,8 +79,16 @@ public class Blackjack{
 // 			System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
 
 			// prompt to replay
-			replay = playAgain();
+			if ( user.canPlay() ) {
+				replay = playAgain();
+			} else
+				System.out.println( "\nYou're all out of money. We're cutting you off." );
+
 		}
+		
+		if ( user.canPlay() )
+			System.out.println( "\nQuitting while you've still got some money, huh? Come back soon!" );
+			
 	}
 	
 	
@@ -148,7 +164,7 @@ public class Blackjack{
 				System.out.println( "\nYou drew a " + c + ".\n" );
 				u.hand.add(c);
 				u_total = u.findTotal();					
-			} else if ( choice.equalsIgnoreCase("stay") ) {
+			} else if ( !choice.equalsIgnoreCase("stay") ) {
 				System.out.println( "Error...please try again." );
 			}	
 		}
