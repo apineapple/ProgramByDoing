@@ -2,31 +2,7 @@ import java.util.ArrayList;
 
 public class Deck{
 	ArrayList<Card> cards = new ArrayList<Card>();
-	
-// 	public static void main(String[] args) {
-// 		Deck test = new Deck( 1 );
-// 		System.out.println( test.cards );
-// 		System.out.println( test.cards.size() + " is the length of the deck" );
-// 		
-// 		Deck test2 = new Deck( 2 );
-// 		System.out.println( test2.cards );
-// 		System.out.println( test2.cards.size() + " is the length of two decks" );
-// 		
-// 		test.shuffle();
-// 		System.out.println ( test.cards + "\nSize: " + test.cards.size());
-// 		System.out.println ( "You have been dealt " + test.dealCard() );
-// 		System.out.println ( "You have been dealt " + test.dealCard() );
-// 		System.out.println ( "You have been dealt " + test.dealCard() );
-// 		System.out.println ( "You have been dealt " + test.dealCard() );
-// 		System.out.println ( "You have been dealt " + test.dealCard() );
-// 		System.out.println ( "You have been dealt " + test.dealCard() );
-// 		System.out.println ( "You have been dealt " + test.dealCard() );
-// 		System.out.println ( test.cards + "\nSize: " + test.cards.size());
-// 		test.shuffle();
-// 		System.out.println ( test.cards + "\nSize: " + test.cards.size());
-// 
-// 	}
-	
+		
 	Deck( int num ) {
 		String[] suits = { "\u2663", "\u2666", "\u2665", "\u2660" }; // clubs, diamonds, hearts, spades
 		String[] names = { "ZERO", "A", "2", "3", "4", "5", "6", 
@@ -78,5 +54,29 @@ public class Deck{
 // 		int x = (int)(Math.random() * cards.size() );
  		return cards.remove(0);
  	}
-			
+	
+// 	public static void main(String[] args) {
+// 		Deck test = new Deck( 1 );
+// 		System.out.println( test.cards );
+// 		System.out.println( test.cards.size() + " is the length of the deck" );
+// 		
+// 		Deck test2 = new Deck( 2 );
+// 		System.out.println( test2.cards );
+// 		System.out.println( test2.cards.size() + " is the length of two decks" );
+// 		
+// 		test.shuffle();
+// 		System.out.println ( test.cards + "\nSize: " + test.cards.size());
+// 		System.out.println ( "You have been dealt " + test.dealCard() );
+// 		System.out.println ( "You have been dealt " + test.dealCard() );
+// 		System.out.println ( "You have been dealt " + test.dealCard() );
+// 		System.out.println ( "You have been dealt " + test.dealCard() );
+// 		System.out.println ( "You have been dealt " + test.dealCard() );
+// 		System.out.println ( "You have been dealt " + test.dealCard() );
+// 		System.out.println ( "You have been dealt " + test.dealCard() );
+// 		System.out.println ( test.cards + "\nSize: " + test.cards.size());
+// 		test.shuffle();
+// 		System.out.println ( test.cards + "\nSize: " + test.cards.size());
+// 
+// 	}
+	
 }	

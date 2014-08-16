@@ -14,17 +14,19 @@ public class Blackjack{
 		Card c;
 		int user_total, dealer_total;
 		int pay_out_multiplier;
+		int wager;
 		
 		
 		System.out.println( "Welcome to Blackjack\n" );
-// 		System.out.print( "What is your name? \n> " );
-// 		user_name = kb.nextLine();
+ 		System.out.print( "What is your name? \n> " );
+ 		user_name = kb.nextLine();
 		BlackjackPlayer user = new BlackjackPlayer(user_name);
 		
 		while ( replay ) {
 		
-			// Place bets
-			
+			System.out.println( "******************\n*** Betting Time ***\n******************\n" );
+			wager = user.makeBet();
+					
 			System.out.println( "******************\n*** New Round ***\n******************\n" );
 			initializeRound(d, user, dealer);
 		
@@ -34,12 +36,12 @@ public class Blackjack{
 			// Check to see if either player received Blackjack		
 			pay_out_multiplier = checkForBJ(user_total, dealer_total);
 			if ( pay_out_multiplier != 2 ) {
-				dealer.showHandAndTotal();
-				d = finishRound( d, user, dealer );
-				System.out.println ( pay_out_multiplier );
+				System.out.println ( "Dealer had " + dealer.hand );	
+				d = finishRound( d, user, dealer, wager, pay_out_multiplier );
+				replay = playAgain();
 				// testing reloading deck			
 	// 			System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
-				System.exit(0);
+				continue;
 			} else {
 				pay_out_multiplier = 0;
 			}
@@ -61,16 +63,13 @@ public class Blackjack{
 
 			// Determine the winner and reload the deck
 			pay_out_multiplier = checkForWin( user_total, dealer_total );
-			System.out.println( pay_out_multiplier );
-			d = finishRound( d, user, dealer );
-// testing reloading deck			
-// 		System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
-
-			System.out.print ( "Would you like to play again? (y/n)\n> " );
-			choice = kb.next();
+			d = finishRound( d, user, dealer, wager, pay_out_multiplier );
 			
-			if ( choice.equalsIgnoreCase("n") || choice.equalsIgnoreCase("no") )
-				replay = false;
+			// testing reloading deck			
+// 			System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
+
+			// prompt to replay
+			replay = playAgain();
 		}
 	}
 	
@@ -148,7 +147,9 @@ public class Blackjack{
 				System.out.println( "\nYou drew a " + c + ".\n" );
 				u.hand.add(c);
 				u_total = u.findTotal();					
-			} 	
+			} else if ( choice.equalsIgnoreCase("stay") ) {
+				System.out.println( "Error...please try again." );
+			}	
 		}
 		return u_total;
 	}
@@ -214,7 +215,8 @@ public class Blackjack{
 	 * Removes any cards from the two players hands and inserts them back into the deck
 	 *
 	 */
-	public static Deck finishRound( Deck d, BlackjackPlayer u, BlackjackPlayer dealer ) {
+	public static Deck finishRound( Deck d, BlackjackPlayer u, BlackjackPlayer dealer,
+									int bet, int multiplier ) {
 		ArrayList<Card> clean_up = new ArrayList<Card>();
 		Card c;
 		
@@ -228,9 +230,25 @@ public class Blackjack{
 			c = clean_up.remove(0);
 			d.cards.add(c);
 		}
-				
+		u.resolveBet( (bet * multiplier) );	
+		System.out.print( "You now have $" + u.showBank() + "\n" );	
 		
 		return d;
 	}
-
+	
+	public static boolean playAgain() {
+		Scanner kb = new Scanner(System.in);
+		String choice;
+		while ( true ) {
+			System.out.print ( "Would you like to play again? (y/n)\n> " );
+			choice = kb.next();
+			if ( choice.equalsIgnoreCase("n") || choice.equalsIgnoreCase("no") )
+				return false;
+			else if ( choice.equalsIgnoreCase("y") || choice.equalsIgnoreCase("yes") )
+				return true;
+			else
+				System.out.println( "Error...please try again." );
+		}
+	}
+	
 }
