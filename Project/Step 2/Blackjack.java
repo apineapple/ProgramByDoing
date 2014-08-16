@@ -48,6 +48,7 @@ public class Blackjack{
 			
 	
 			// player's turn
+			System.out.println( "\n*****************\n** " + user.name + "'s turn **\n*****************\n" );
 			user_total = userTurn(d, user);		
 		
 			System.out.println( "\n" + user.name + " ends the round with " + user_total + ".\n" );
@@ -55,6 +56,7 @@ public class Blackjack{
 			// dealer's turn
 			// dealer will only play if user has not busted			
 			if ( user_total <= 21 ) {
+				System.out.println( "*******************\n** " + dealer.name + "'s turn **\n*******************\n" );
 				dealer_total = dealerTurn( d, dealer, user_total );
 			}
 
@@ -135,7 +137,6 @@ public class Blackjack{
 		Scanner kb = new Scanner(System.in);
 		Card c;
 		
-		System.out.println( "\n*****************\n** " + u.name + "'s turn **\n*****************\n" );
 		while ( u_total <= 21 && ! choice.equalsIgnoreCase("stay") ) {
 			u.showHandAndTotal();
 			System.out.println( "Would you like to \"hit\" or \"stay\"?" );
@@ -160,7 +161,6 @@ public class Blackjack{
 		Scanner kb = new Scanner(System.in);
 		Card c;
 			
-		System.out.println( "*******************\n** " + dealer.name + "'s turn **\n*******************\n" );
 		while ( d_total <= 21 && ! choice.equals("stay") ) {
 			// Dealer will hit until it has 17 or greater
 			dealer.showHandAndTotal();
@@ -231,7 +231,7 @@ public class Blackjack{
 			d.cards.add(c);
 		}
 		u.resolveBet( (bet * multiplier) );	
-		System.out.print( "You now have $" + u.showBank() + "\n" );	
+		System.out.println( "You now have $" + u.showBank() + "\n" );	
 		
 		return d;
 	}

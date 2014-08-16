@@ -8,6 +8,12 @@ public class BlackjackPlayer extends CardPlayer {
 		this.name = n;
 	}
 	
+	/**
+	 * Returns players hand total as int.
+	 * Aces scale from 11 to 1 if hand total is greater than 21
+	 * 
+	 */ 
+	
 	public int findTotal() {
 		int i;
 		int current_total = 0;
@@ -46,18 +52,28 @@ public class BlackjackPlayer extends CardPlayer {
 	
 	public int makeBet() {
 		Scanner keyboard = new Scanner(System.in);
-		int bet;
+		int bet = -1;
+		boolean bError = true;
 		
-		while ( true ) {	
-			System.out.println( "You currently have $" + this.wallet );	
-			System.out.print( "Bet: (min 5 max 100 increment of 5)\n> " );
-			bet = keyboard.nextInt();
+		while (true) {
+			while (bError) {
+				 try {
+					System.out.println( "You currently have $" + this.wallet );	
+					System.out.print( "Bet: (min 5 max 100 increment of 5)\n> " );
+					bet = Integer.parseInt(keyboard.nextLine());
+					bError = false;
+
+				} catch (Exception e) {
+					System.out.println( "Error...please try a number.\n" );
+				}
+			}
+			
 			if ( bet < 5 || bet > 100 || bet > this.wallet || bet % 5 != 0) {
-				System.out.println( "You cannot bet $" + bet + "...please try again." );
+				System.out.println( "You cannot bet $" + bet + "...please try again.\n" );
+				bError = true;
 			} else
 				return bet;		
 		}
-
 	}
 	
 	public void resolveBet(int end_bet) {
