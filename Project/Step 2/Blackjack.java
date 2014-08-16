@@ -21,67 +21,57 @@ public class Blackjack{
 // 		user_name = kb.nextLine();
 		BlackjackPlayer user = new BlackjackPlayer(user_name);
 		
-		initializeRound(d, user, dealer);
+		while ( replay ) {
 		
-		user_total = user.findTotal();
-		dealer_total = dealer.findTotal();
+			// Place bets
+			
+			System.out.println( "******************\n*** New Round ***\n******************\n" );
+			initializeRound(d, user, dealer);
 		
-		// Check to see if either player received Blackjack		
-		pay_out_multiplier = checkForBJ(user_total, dealer_total);
-		if ( pay_out_multiplier != 2 ) {
-			dealer.showHandAndTotal();
-			d = finishRound( d, user, dealer );
-			System.out.println ( pay_out_multiplier );
-			// testing reloading deck			
-// 			System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
-			System.exit(0);
-		} else {
-			pay_out_multiplier = 0;
-		}
+			user_total = user.findTotal();
+			dealer_total = dealer.findTotal();
+		
+			// Check to see if either player received Blackjack		
+			pay_out_multiplier = checkForBJ(user_total, dealer_total);
+			if ( pay_out_multiplier != 2 ) {
+				dealer.showHandAndTotal();
+				d = finishRound( d, user, dealer );
+				System.out.println ( pay_out_multiplier );
+				// testing reloading deck			
+	// 			System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
+				System.exit(0);
+			} else {
+				pay_out_multiplier = 0;
+			}
 			
 	
-		// player's turn
-		user_total = userTurn(d, user);		
+			// player's turn
+			user_total = userTurn(d, user);		
 		
-		System.out.println( "\n" + user.name + " ended the round with " + user_total + ".\n" );
+			System.out.println( "\n" + user.name + " ends the round with " + user_total + ".\n" );
 
-		// dealer's turn
-		// dealer will only play if user has not busted			
-		if ( user_total <= 21 ) {
-			choice = "";
-			System.out.println( "*******************\n** " + dealer.name + "'s turn **\n*******************\n" );
-			while ( dealer_total <= 21 && ! choice.equals("stay") ) {
-				// Dealer will hit until it has 17 or greater
-				dealer.showHandAndTotal();
-				if ( dealer_total < 17 ) {
-					if ( dealer_total <= user_total && user_total <= 21 ) { 
-						choice = "hit";
-						c = d.dealCard();
-						System.out.println( "\nDealer chooses to hit.\nHe draws a " + c + ".\n" );
-						dealer.hand.add(c);
-						dealer_total = dealer.findTotal();
-					} else {
-						choice = "stay";
-					}
-				}
-				else
-				{
-					choice = "stay";
-					System.out.println( "Dealer stays.\n" );
-				}
+			// dealer's turn
+			// dealer will only play if user has not busted			
+			if ( user_total <= 21 ) {
+				dealer_total = dealerTurn( d, dealer, user_total );
 			}
-		}
 
-		System.out.println( dealer.name + " ended the round with " + dealer_total + ".\n" );
-		System.out.println( "******************\n** End of Round **\n******************\n" );
+			System.out.println( dealer.name + " ends the round with " + dealer_total + ".\n" );
+			System.out.println( "******************\n** End of Round **\n******************\n" );
 
-		// Determine the winner and reload the deck
-		pay_out_multiplier = checkForWin( user_total, dealer_total );
-		System.out.println( pay_out_multiplier );
-		d = finishRound( d, user, dealer );
+			// Determine the winner and reload the deck
+			pay_out_multiplier = checkForWin( user_total, dealer_total );
+			System.out.println( pay_out_multiplier );
+			d = finishRound( d, user, dealer );
 // testing reloading deck			
 // 		System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
 
+			System.out.print ( "Would you like to play again? (y/n)\n> " );
+			choice = kb.next();
+			
+			if ( choice.equalsIgnoreCase("n") || choice.equalsIgnoreCase("no") )
+				replay = false;
+		}
 	}
 	
 	
@@ -90,31 +80,26 @@ public class Blackjack{
 	 * Shuffles the deck and deals two cards to each player
 	 *
 	 */
-	public static void initializeRound( Deck d, BlackjackPlayer p, BlackjackPlayer dealer ) {
+	public static void initializeRound( Deck d, BlackjackPlayer u, BlackjackPlayer dealer ) {
 		int i;
 		
 		d.shuffle();
 		
 // Testing win logic
-// 			dealer.hand.add(new Card("A", "S", 10));
+// 			dealer.hand.add(new Card("A", "S", 5));
 // 			dealer.hand.add(new Card("J", "S", 10));
-// 			p.hand.add(new Card("A", "S", 11));
-// 			p.hand.add(new Card("J", "S", 10));
+// 			u.hand.add(new Card("A", "S", 5));
+//  		u.hand.add(new Card("J", "S", 10));
 
 		// Deals 2 cards from top of deck to the players
 		for (i = 0; i < 2; i++ )
 			dealer.hand.add(d.dealCard()); 	
 		for (i = 0; i < 2; i++ )
-			p.hand.add(d.dealCard());
+			u.hand.add(d.dealCard());
 
-		p.showHandAndTotal();
+		u.showHandAndTotal();
 		System.out.println( "\n=-=-=-=-=-=-=-=-=-=-=--=-=\n\n" + dealer.name + " has [" + dealer.hand.get(0) + ", **]" );
 		System.out.println( dealer.name + "'s total is hidden.\n" );
-// Testing BJ game logic
-// 		dealer.showHandAndTotal();
-// 		System.out.println( "Did you get blackjack: " + checkForBJ(p.findTotal()) );
-// 		System.out.println( "Did the dealer: " + checkForBJ(dealer.findTotal()) );
-
 			
 	}
 	
@@ -141,6 +126,10 @@ public class Blackjack{
 		}
 	}
 	
+	/**
+	 * Will allow a user to hit or stay. Will run until user stays or busts.
+	 * Returns user's final total
+	 */
 	public static int userTurn( Deck d, BlackjackPlayer u ) {
 		int u_total = u.findTotal();
 		String choice = "";
@@ -148,13 +137,13 @@ public class Blackjack{
 		Card c;
 		
 		System.out.println( "\n*****************\n** " + u.name + "'s turn **\n*****************\n" );
-		while ( u_total <= 21 && ! choice.equals("stay") ) {
-			System.out.println( "Would you like to \"hit\" or \"stay\"?" );
+		while ( u_total <= 21 && ! choice.equalsIgnoreCase("stay") ) {
 			u.showHandAndTotal();
+			System.out.println( "Would you like to \"hit\" or \"stay\"?" );
 			System.out.print( "> " );
 			choice = kb.next();
 		
-			if ( choice.equals("hit") ) {
+			if ( choice.equalsIgnoreCase("hit") ) {
 				c = d.dealCard();
 				System.out.println( "\nYou drew a " + c + ".\n" );
 				u.hand.add(c);
@@ -162,6 +151,36 @@ public class Blackjack{
 			} 	
 		}
 		return u_total;
+	}
+	
+	public static int dealerTurn( Deck d, BlackjackPlayer dealer, int u_total ) {
+		int d_total = dealer.findTotal();
+		String choice = "";
+		Scanner kb = new Scanner(System.in);
+		Card c;
+			
+		System.out.println( "*******************\n** " + dealer.name + "'s turn **\n*******************\n" );
+		while ( d_total <= 21 && ! choice.equals("stay") ) {
+			// Dealer will hit until it has 17 or greater
+			dealer.showHandAndTotal();
+			if ( d_total < 17 ) {
+				if ( d_total <= u_total && u_total <= 21 ) { 
+					choice = "hit";
+					c = d.dealCard();
+					System.out.println( "\nDealer chooses to hit.\nHe draws a " + c + ".\n" );
+					dealer.hand.add(c);
+					d_total = dealer.findTotal();
+				} else {
+					choice = "stay";
+					System.out.println( "Dealer stays.\n" );
+				}
+			} else {
+				choice = "stay";
+				System.out.println( "Dealer stays.\n" );
+			}
+		}
+		
+		return d_total;
 	}
 
 	/**

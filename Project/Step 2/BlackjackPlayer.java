@@ -57,6 +57,9 @@ public class BlackjackPlayer extends CardPlayer {
 		return this.wallet > 0;
 	}
 	
+// 	public static boolean makeBet(int bet) {
+// 	}
+// 	
 	// Displays Player's hand and Total
 	public void showHandAndTotal() {
 		System.out.println( this.name + " has " + this.hand );
