@@ -41,22 +41,7 @@ public class Blackjack{
 			
 	
 		// player's turn
-		System.out.println( "\n*****************\n** " + user.name + "'s turn **\n*****************\n" );
-		while ( user_total <= 21 && ! choice.equals("stay") ) {
-			System.out.println( "Would you like to \"hit\" or \"stay\"?" );
-			user.showHandAndTotal();
-			System.out.print( "> " );
-			choice = kb.next();
-		
-			if ( choice.equals("hit") ) {
-				c = d.dealCard();
-				System.out.println( "\nYou drew a " + c + ".\n" );
-				user.hand.add(c);
-				user_total = user.findTotal();					
-			} 
-			
-		}
-		
+		user_total = userTurn(d, user);		
 		
 		System.out.println( "\n" + user.name + " ended the round with " + user_total + ".\n" );
 
@@ -133,10 +118,11 @@ public class Blackjack{
 			
 	}
 	
-// 	public static Boolean checkForBJ(int score) {	
-// 		return (  score == 21 );
-// 	}
-	
+	/**
+	 * Used after initial deal to see if a Blackjack was dealt	
+	 * This will return a payout rate of 1, 0, -1 if one was dealt 
+	 * otherwise it will return 2
+	 */
 	public static int checkForBJ(int u_total, int d_total) {	
 		if ( u_total == 21 && d_total != 21 ) {
 			System.out.println( "*******************\n** End of Round **\n*******************\n" );
@@ -154,8 +140,34 @@ public class Blackjack{
 			return 2;
 		}
 	}
-
 	
+	public static int userTurn( Deck d, BlackjackPlayer u ) {
+		int u_total = u.findTotal();
+		String choice = "";
+		Scanner kb = new Scanner(System.in);
+		Card c;
+		
+		System.out.println( "\n*****************\n** " + u.name + "'s turn **\n*****************\n" );
+		while ( u_total <= 21 && ! choice.equals("stay") ) {
+			System.out.println( "Would you like to \"hit\" or \"stay\"?" );
+			u.showHandAndTotal();
+			System.out.print( "> " );
+			choice = kb.next();
+		
+			if ( choice.equals("hit") ) {
+				c = d.dealCard();
+				System.out.println( "\nYou drew a " + c + ".\n" );
+				u.hand.add(c);
+				u_total = u.findTotal();					
+			} 	
+		}
+		return u_total;
+	}
+
+	/**
+	 * Used at the end of the round to determine the payout rate
+	 * Will return a payout rate of 1, 0, or -1
+	 */ 
 	public static int checkForWin(int u_total, int d_total) {
 		if ( u_total <= 21 ) {
 			if ( d_total <= 21 ) {
@@ -179,6 +191,10 @@ public class Blackjack{
 		}
 	}
 	
+	/**
+	 * Removes any cards from the two players hands and inserts them back into the deck
+	 *
+	 */
 	public static Deck finishRound( Deck d, BlackjackPlayer u, BlackjackPlayer dealer ) {
 		ArrayList<Card> clean_up = new ArrayList<Card>();
 		Card c;
