@@ -16,15 +16,11 @@ public class CardPlayer {
 	
 	// other possible functions draw card, discard card
 	
-	public Card drawCard( Deck d ) {
-		Card c;
-		
-		c = d.dealCard();
-		this.hand.add(c);
-		
-		return c;
+	public void addCard( Card c ) {		
+		this.hand.add(c);	
 	}
 	
+	// removes card from hand according to position counting up from 1;
 	public Card discardCard(int card_num) {
 		Card c;
 		
@@ -45,7 +41,8 @@ public class CardPlayer {
 // 		// Testing drawCard()
 // 		for (int i = 0; i < 5; i++ ) {
 // 			System.out.println( "Start of loop Player hand: " + p1.hand );
-// 			c = p1.drawCard(d);		
+// 			c = d.dealCard();
+// 			p1.addCard(c);		
 // 			System.out.println(c);
 // 			System.out.println( "End of loop Player hand: " + p1.hand );
 // 		}
@@ -56,6 +53,8 @@ public class CardPlayer {
 // 		c = p1.discardCard(discard);
 // 		System.out.println(c);
 // 		System.out.println( "Player hand after discard: " + p1.hand );
+// 		d.returnCard(c);
+// 		
 // 		
 // // Testing clearHand
 // 		ArrayList<Card> return_to_deck = new ArrayList<Card>();
@@ -73,5 +72,5 @@ public class CardPlayer {
 // 		System.out.println( "Remaining cards from hand: " + return_to_deck );
 // 		System.out.println( "Deck\n" + d.cards + "\nwith " + d.cards.size() );				
 // 	}
-	
+// 	
 }
