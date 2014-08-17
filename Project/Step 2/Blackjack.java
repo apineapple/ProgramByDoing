@@ -263,16 +263,13 @@ public class Blackjack{
 		ArrayList<Card> clean_up = new ArrayList<Card>();
 		Card c;
 		
-		clean_up = u.clearHand();
+		clean_up.addAll(u.clearHand());
+		clean_up.addAll(dealer.clearHand());
 		while ( clean_up.size() > 0 ) {
 			c = clean_up.remove(0);
-			d.cards.add(c);
+			d.returnCard(c);
 		}
-		clean_up = dealer.clearHand();
-		while ( clean_up.size() > 0 ) {
-			c = clean_up.remove(0);
-			d.cards.add(c);
-		}
+
 		u.addMoney( (bet * multiplier) );	
 		System.out.println( "You now have $" + u.showBank() + "\n" );	
 		
