@@ -39,10 +39,6 @@ public class BlackjackPlayer extends CardPlayer {
 		return current_total;
 	}
 
-	// returns true if Player still has money to bet
-	public boolean canPlay() {
-		return this.wallet > 0;
-	}
 		
 	// Displays Player's hand and Total
 	public void showHandAndTotal() {
@@ -76,30 +72,27 @@ public class BlackjackPlayer extends CardPlayer {
 // 		}
 // 	}
 
-	public int wagerBet() {
-		Scanner kb = new Scanner(System.in);
+	public int wagerBet(String s) {
 		boolean errorCheck = true;
 		int bet = this.wallet + 1;
 
 		
-		while (true) {
-			System.out.print( "\n> " );
 			while (errorCheck) {
 				try {
-					bet = Integer.parseInt(kb.nextLine());
+					bet = Integer.parseInt(s);
 					errorCheck = false;
 				} catch (Exception e) {
-					System.out.print( "Error...please try a number.\n> " );
+					System.out.println( "Error...please try a number." );
+					return 0;
 
 				}
 			}
 
 			if (bet > this.wallet) {
-				errorCheck = true;
-				System.out.print ( "You cannot bet $" + bet + ". You only have $" + this.wallet );
+				System.out.println ( "You cannot bet $" + bet + ". You only have $" + this.wallet + "." );
+				return 0;
 			} else
 				return bet;
-		}
 			
 	}		
 	
@@ -111,47 +104,54 @@ public class BlackjackPlayer extends CardPlayer {
 	public void addMoney( int amount ) {
 		this.wallet += amount;
 	}
+
+	public boolean hasMoney() {
+		return this.wallet > 0;
+	}
 	
 	public int showBank() {
 		return this.wallet;
 	}
 
 // Testing findTotal to make sure A scales between 1 and 11			
- 	public static void main( String[] args ) {
- 		BlackjackPlayer test1 = new BlackjackPlayer("nick");
-		test1.hand.add(new Card("A", "S", 11));
-		test1.hand.add(new Card("A", "C", 11));
-		test1.hand.add(new Card("A", "H", 11));
-		test1.hand.add(new Card("A", "D", 11));
-		test1.hand.add(new Card("2", "S", 2));
-		test1.hand.add(new Card("2", "C", 2));
-		test1.hand.add(new Card("2", "H", 2));
-		test1.hand.add(new Card("2", "D", 2));
-		test1.hand.add(new Card("3", "S", 3));
-		test1.hand.add(new Card("3", "C", 3));
-		test1.hand.add(new Card("3", "H", 3));
-		test1.hand.add(new Card("3", "D", 3));	
-		for ( int i = 0; i < 11; i++ )
-			test1.hand.add(new Card("A", "S", 11));
-	
-		test1.showHandAndTotal();
-		System.out.println( test1.showBank() );
-		int wager = 0;
-		
-		while ( wager < 5 || wager > 100 || wager > test1.showBank() || wager % 5 != 0 ) {
-			System.out.print ( "Place a bet... " );
-			wager = test1.wagerBet();
-			if ( wager < 5 || wager > 100 || wager > test1.showBank() || wager % 5 != 0) 
- 				System.out.println( "You cannot bet $" + wager + "...please try again." );
- 			
-		}
-		System.out.println( wager );
-		test1.removeMoney( wager );
-		System.out.println( test1.showBank() );
-		test1.addMoney( wager );
-		System.out.println( test1.showBank() );
-		
- 	}
-
-	
+//  	public static void main( String[] args ) {
+//  		BlackjackPlayer test1 = new BlackjackPlayer("nick");
+//  		Scanner kb = new Scanner(System.in);
+//  		String line;
+// 		test1.hand.add(new Card("A", "S", 11));
+// 		test1.hand.add(new Card("A", "C", 11));
+// 		test1.hand.add(new Card("A", "H", 11));
+// 		test1.hand.add(new Card("A", "D", 11));
+// 		test1.hand.add(new Card("2", "S", 2));
+// 		test1.hand.add(new Card("2", "C", 2));
+// 		test1.hand.add(new Card("2", "H", 2));
+// 		test1.hand.add(new Card("2", "D", 2));
+// 		test1.hand.add(new Card("3", "S", 3));
+// 		test1.hand.add(new Card("3", "C", 3));
+// 		test1.hand.add(new Card("3", "H", 3));
+// 		test1.hand.add(new Card("3", "D", 3));	
+// 		for ( int i = 0; i < 11; i++ )
+// 			test1.hand.add(new Card("A", "S", 11));
+// 	
+// 		test1.showHandAndTotal();
+// 		System.out.println( test1.showBank() );
+// 		int wager = 0;
+// 		// testing taking bets
+// 		while ( wager < 5 || wager > 1000 || wager > test1.showBank() || wager % 5 != 0 ) {
+// 			System.out.print ( "Place a bet...(min $5 max $100 increments of 5)\n> " );
+// 			line = kb.nextLine();
+// 			wager = test1.wagerBet(line);
+// 			if ( wager < 5 || wager > 1000 || wager > test1.showBank() || wager % 5 != 0) 
+//  				System.out.println( "Invalid bet...please try again." );
+//  			
+// 		}
+// 		System.out.println( wager );
+// 		test1.removeMoney( wager );
+// 		System.out.println( test1.showBank() );
+// 		test1.addMoney( wager );
+// 		System.out.println( test1.showBank() );
+// 		
+//  	}
+// 
+// 	
 }
