@@ -9,11 +9,10 @@ public class Card{
 		this.value = v;
 	}
 	
-	public String toString()
-	{
+	public String toString() {
 		return this.name + "" + this.suit;
 	}
-
+	
 	
 // 	public static void main( String[] args ){
 // 		Card test = new Card( "Ace", "Spade", 1 );
