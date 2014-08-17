@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class Deck{
 	ArrayList<Card> cards = new ArrayList<Card>();
+	int size;
 		
 	Deck( int num ) {
 		String[] suits = { "\u2663", "\u2666", "\u2665", "\u2660" }; // clubs, diamonds, hearts, spades
@@ -25,6 +26,8 @@ public class Deck{
 				}
 			}
 		}
+		
+		this.size = cards.size();
 		
 	}
 	
@@ -50,10 +53,16 @@ public class Deck{
 		}
 	}
 	
+	// Deals a card from the top of the deck
  	public Card dealCard() {
-// 		int x = (int)(Math.random() * cards.size() );
  		return cards.remove(0);
  	}
+ 	
+ 	// returns card to the bottom of the deck
+ 	public void returnCard(Card c) {
+ 		this.cards.add(c);
+ 	}
+ 	
 	
 // 	public static void main(String[] args) {
 // 		Deck test = new Deck( 1 );
