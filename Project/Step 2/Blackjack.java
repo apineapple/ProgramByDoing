@@ -22,10 +22,10 @@ public class Blackjack{
  		user_name = kb.nextLine();
 		BlackjackPlayer user = new BlackjackPlayer(user_name);
 		
-		while ( replay && user.canPlay() ) {
+		while ( replay && user.hasMoney() ) {
 		
 			System.out.println( "\n********************\n*** Betting Time ***\n********************\n" );
-			wager = user.makeBet();
+			wager = takeBet(user);
 					
 			System.out.println( "\n******************\n*** New Round ***\n******************\n" );
 			initializeRound(d, user, dealer);
@@ -33,21 +33,21 @@ public class Blackjack{
 			user_total = user.findTotal();
 			dealer_total = dealer.findTotal();
 		
-			// Check to see if either player received Blackjack		
-			pay_out_multiplier = checkForBJ(user_total, dealer_total);
-			if ( pay_out_multiplier != 2 ) {
-				System.out.println ( "Dealer had " + dealer.hand );	
-				d = finishRound( d, user, dealer, wager, pay_out_multiplier );
-				replay = playAgain();
-				// testing reloading deck			
-	// 			System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
-				continue;
-			} else {
-				pay_out_multiplier = 0;
+			// Check to see if either player received Blackjack
+			if ( checkForBJ(user_total, dealer_total) ) {		
+				pay_out_multiplier = resolveBJ(user_total, dealer_total);
+				if ( pay_out_multiplier != 2 ) {
+					System.out.println ( "Dealer had " + dealer.hand );	
+					d = finishRound( d, user, dealer, wager, pay_out_multiplier );
+					replay = playAgain();
+					continue;
+				} else {
+					pay_out_multiplier = 0;
+				}
 			}
 			
 			// To slow the text bombardment
-			System.out.println( "Press enter to start your turn..." );
+			System.out.print( "Press enter to start your turn..." );
 			kb.nextLine();
 			
 			// player's turn
@@ -61,7 +61,7 @@ public class Blackjack{
 			// dealer will only play if user has not busted			
 			if ( user_total <= 21 ) {
 				// To slow the text bombardment
-				System.out.println( "On to the dealer's turn..." );
+				System.out.print( "On to the dealer's turn..." );
 				kb.nextLine();
 
 				System.out.println( "*******************\n** " + dealer.name + "'s turn **\n*******************\n" );
@@ -79,19 +79,42 @@ public class Blackjack{
 // 			System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
 
 			// prompt to replay
-			if ( user.canPlay() ) {
+			if ( user.hasMoney() ) {
 				replay = playAgain();
 			} else
 				System.out.println( "\nYou're all out of money. We're cutting you off." );
 
 		}
 		
-		if ( user.canPlay() )
+		if ( user.hasMoney() )
 			System.out.println( "\nQuitting while you've still got some money, huh? Come back soon!" );
 			
 	}
 	
 	
+	
+	// Take a bet
+	public static int takeBet(BlackjackPlayer u) {
+		int bet = 0;
+		Scanner kb = new Scanner(System.in);
+		String line;
+		
+		while ( allowedBet(bet) ) {
+			System.out.print ( "Place a bet...(min $5 max $100 increments of 5)\n> " );
+			line = kb.nextLine();
+			bet = u.wagerBet(line);
+			if ( allowedBet(bet) ) 
+ 				System.out.println( "Invalid bet...please try again." );
+ 			
+		}
+		
+		return bet;
+
+	}
+	
+	private static boolean allowedBet( int bet ) {
+		return ( bet < 5 || bet > 100 || bet % 5 != 0 );
+	}
 	
 	/** 
 	 * Shuffles the deck and deals two cards to each player
@@ -125,7 +148,11 @@ public class Blackjack{
 	 * This will return a payout rate of 1, 0, -1 if one was dealt 
 	 * otherwise it will return 2
 	 */
-	public static int checkForBJ(int u_total, int d_total) {	
+	public static boolean checkForBJ( int u_total, int d_total ) {
+		return ( u_total == 21 || d_total == 21 );
+	} 
+	 
+	public static int resolveBJ(int u_total, int d_total) {	
 		if ( u_total == 21 && d_total != 21 ) {
 			System.out.println( "*******************\n** End of Round **\n*******************\n" );
 			System.out.println( "You got Blackjack! You win this round.\n" );
@@ -246,11 +273,12 @@ public class Blackjack{
 			c = clean_up.remove(0);
 			d.cards.add(c);
 		}
-		u.resolveBet( (bet * multiplier) );	
+		u.addMoney( (bet * multiplier) );	
 		System.out.println( "You now have $" + u.showBank() + "\n" );	
 		
 		return d;
 	}
+	
 	
 	public static boolean playAgain() {
 		Scanner kb = new Scanner(System.in);
