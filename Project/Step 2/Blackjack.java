@@ -26,7 +26,7 @@ public class Blackjack{
 			System.out.println( "\n********************\n*** Betting Time ***\n********************\n" );
 			takeBet(user);
 								
-			System.out.println( "\n******************\n*** New Round ***\n******************\n" );
+			System.out.println( "\n******************\n*** New Round ***\n*******************\n" );
 			initializeRound(d, user, dealer);
 		
 			user_total = user.findTotal();
@@ -59,7 +59,7 @@ public class Blackjack{
 				System.out.print( "On to the dealer's turn..." );
 				kb.nextLine();
 
-				System.out.println( "*******************\n** " + dealer.name + "'s turn **\n*******************\n" );
+				System.out.println( "\n*******************\n** " + dealer.name + "'s turn **\n*******************\n" );
 				dealer_total = dealerTurn( d, dealer, user_total );
 			}
 
