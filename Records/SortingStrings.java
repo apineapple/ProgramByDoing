@@ -1,7 +1,7 @@
 import java.io.File;
 import java.util.Scanner;
 
-public class SortingAnArrayOfRecords
+public class SortingStrings
 {
 	public static void main( String[] args ) throws Exception
 	{
@@ -32,7 +32,8 @@ public class SortingAnArrayOfRecords
 		
 		for ( i = 0; i < cars.length; i++ ) {
 			for ( int j = i + 1; j < cars.length; j++ ) {
-				if ( cars[i].year > cars[j].year ) {
+				int strValue = cars[i].make.compareTo(cars[j].make);
+				if ( strValue > 0 ) {
 					temp_car = cars[i];
 					cars[i] = cars[j];
 					cars[j] = temp_car;
