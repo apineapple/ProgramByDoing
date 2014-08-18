@@ -14,7 +14,6 @@ public class Blackjack{
 		Card c;
 		int user_total, dealer_total;
 		int pay_out_multiplier;
-		int wager;
 		
 		
 		System.out.println( "Welcome to Blackjack\n" );
@@ -25,8 +24,8 @@ public class Blackjack{
 		while ( replay && user.hasMoney() ) {
 		
 			System.out.println( "\n********************\n*** Betting Time ***\n********************\n" );
-			wager = takeBet(user);
-					
+			takeBet(user);
+								
 			System.out.println( "\n******************\n*** New Round ***\n******************\n" );
 			initializeRound(d, user, dealer);
 		
@@ -36,10 +35,10 @@ public class Blackjack{
 			// Check to see if either player received Blackjack
 			if ( checkForBJ(user_total, dealer_total) ) {		
 				pay_out_multiplier = resolveBJ(user_total, dealer_total);
-				if ( pay_out_multiplier != 2 ) {
-					System.out.println ( "Dealer had " + dealer.hand );	
-					d = finishRound( d, user, dealer, wager, pay_out_multiplier );
-					replay = playAgain();
+				if ( pay_out_multiplier != 0 ) {
+					System.out.println ( "Dealer had " + dealer.hand + "\n");	
+					d = finishRound( d, user, dealer, pay_out_multiplier );
+					replay = playAgain(user);
 					continue;
 				} else {
 					pay_out_multiplier = 0;
@@ -59,7 +58,7 @@ public class Blackjack{
 
 			// dealer's turn
 			// dealer will only play if user has not busted			
-			if ( user_total <= 21 ) {
+			if ( user_total <= 21 ) { 
 				// To slow the text bombardment
 				System.out.print( "On to the dealer's turn..." );
 				kb.nextLine();
@@ -73,33 +72,28 @@ public class Blackjack{
 
 			// Determine the winner and reload the deck
 			pay_out_multiplier = checkForWin( user_total, dealer_total );
-			d = finishRound( d, user, dealer, wager, pay_out_multiplier );
+			d = finishRound( d, user, dealer, pay_out_multiplier );
 			
-			// testing reloading deck			
-// 			System.out.println( "Deck d: " + d.cards + "\nSize: " + d.cards.size() );
-
 			// prompt to replay
-			if ( user.hasMoney() ) {
-				replay = playAgain();
-			} else
-				System.out.println( "\nYou're all out of money. We're cutting you off." );
+			replay = playAgain(user);
 
 		}
 		
 		if ( user.hasMoney() )
-			System.out.println( "\nQuitting while you've still got some money, huh? Come back soon!" );
+			System.out.println( "Quitting while you've still got some money, huh? Come back soon!" );
 			
 	}
 	
 	
 	
 	// Take a bet
-	public static int takeBet(BlackjackPlayer u) {
+	public static void takeBet(BlackjackPlayer u) { 
 		int bet = 0;
 		Scanner kb = new Scanner(System.in);
 		String line;
 		
 		while ( allowedBet(bet) ) {
+			System.out.println( "You currently have $" + u.showBank() );
 			System.out.print ( "Place a bet...(min $5 max $100 increments of 5)\n> " );
 			line = kb.nextLine();
 			bet = u.wagerBet(line);
@@ -108,7 +102,8 @@ public class Blackjack{
  			
 		}
 		
-		return bet;
+		u.removeMoney(bet);
+		u.bet += bet;
 
 	}
 	
@@ -126,16 +121,16 @@ public class Blackjack{
 		d.shuffle();
 		
 // Testing win logic
-// 			dealer.hand.add(new Card("A", "S", 5));
+// 			dealer.hand.add(new Card("A", "S", 10));
 // 			dealer.hand.add(new Card("J", "S", 10));
-// 			u.hand.add(new Card("A", "S", 5));
-//  		u.hand.add(new Card("J", "S", 10));
+// 			u.hand.add(new Card("A", "S", 1));
+//  			u.hand.add(new Card("J", "S", 10));
 
 		// Deals 2 cards from top of deck to the players
 		for (i = 0; i < 2; i++ )
-			dealer.hand.add(d.dealCard()); 	
+			dealer.addCard(d.dealCard()); 	
 		for (i = 0; i < 2; i++ )
-			u.hand.add(d.dealCard());
+			u.addCard(d.dealCard());
 
 		u.showHandAndTotal();
 		System.out.println( "\n=-=-=-=-=-=-=-=-=-=-=--=-=\n\n" + dealer.name + " has [" + dealer.hand.get(0) + ", **]" );
@@ -156,22 +151,22 @@ public class Blackjack{
 		if ( u_total == 21 && d_total != 21 ) {
 			System.out.println( "*******************\n** End of Round **\n*******************\n" );
 			System.out.println( "You got Blackjack! You win this round.\n" );
-			return 1;
+			return 2;
 		} else if ( u_total == 21 && d_total == 21 ) {
 			System.out.println( "*******************\n** End of Round **\n*******************\n" );
 			System.out.println( "You both got Blackjack. The round is a draw.\n" );		
-			return 0;
+			return 1;
 		} else if ( d_total == 21 ) {
 			System.out.println( "*******************\n** End of Round **\n*******************\n" );
 			System.out.println( "Dealer got Blackjack. You lose this round.\n" );		
 			return -1;
 		} else {
-			return 2;
+			return 0;
 		}
 	}
 	
 	/**
-	 * Will allow a user to hit or stay. Will run until user stays or busts.
+	 * Prompts user their options. Will run until user stays or busts.
 	 * Returns user's final total
 	 */
 	public static int userTurn( Deck d, BlackjackPlayer u ) {
@@ -179,21 +174,28 @@ public class Blackjack{
 		String choice = "";
 		Scanner kb = new Scanner(System.in);
 		Card c;
+		int phase = 1;
 		
 		while ( u_total <= 21 && ! choice.equalsIgnoreCase("stay") ) {
 			u.showHandAndTotal();
-			System.out.println( "Would you like to \"hit\" or \"stay\"?" );
+			u.showOptions(phase);
 			System.out.print( "> " );
 			choice = kb.next();
 		
 			if ( choice.equalsIgnoreCase("hit") ) {
 				c = d.dealCard();
-				System.out.println( "\nYou drew a " + c + ".\n" );
-				u.hand.add(c);
-				u_total = u.findTotal();					
+				u_total = u.hit(c);					
+			} else if ( choice.equalsIgnoreCase("double down") || choice.equalsIgnoreCase("dd") ) {
+				takeBet(u);
+				c = d.dealCard();
+				u_total = u.hit(c);
+				u.showHandAndTotal();
+				choice = "stay";			
 			} else if ( !choice.equalsIgnoreCase("stay") ) {
 				System.out.println( "Error...please try again." );
 			}	
+			
+			phase++;
 		}
 		return u_total;
 	}
@@ -201,7 +203,6 @@ public class Blackjack{
 	public static int dealerTurn( Deck d, BlackjackPlayer dealer, int u_total ) {
 		int d_total = dealer.findTotal();
 		String choice = "";
-		Scanner kb = new Scanner(System.in);
 		Card c;
 			
 		while ( d_total <= 21 && ! choice.equals("stay") ) {
@@ -212,7 +213,7 @@ public class Blackjack{
 					choice = "hit";
 					c = d.dealCard();
 					System.out.println( "\nDealer chooses to hit.\nHe draws a " + c + ".\n" );
-					dealer.hand.add(c);
+					dealer.addCard(c);
 					d_total = dealer.findTotal();
 				} else {
 					choice = "stay";
@@ -236,17 +237,17 @@ public class Blackjack{
 			if ( d_total <= 21 ) {
 				if ( u_total > d_total ) {
 					System.out.println( "You beat Dealer!\n" );
-					return 1;
+					return 2;
 				} else if ( u_total == d_total ) {
 					System.out.println( "You Drew.\n" );
-					return 0;
+					return 1;
 				} else {
 					System.out.println( "Dealer beat you\n" );
 					return -1;
 				}
 			} else {
 				System.out.println( "Dealer busted! You win!!\n" );
-				return 1;
+				return 2;
 			}
 		} else {
 			System.out.println( "you busted\n" );
@@ -259,9 +260,10 @@ public class Blackjack{
 	 *
 	 */
 	public static Deck finishRound( Deck d, BlackjackPlayer u, BlackjackPlayer dealer,
-									int bet, int multiplier ) {
+									int multiplier ) { 
 		ArrayList<Card> clean_up = new ArrayList<Card>();
 		Card c;
+		int winnings = u.bet * multiplier;
 		
 		clean_up.addAll(u.clearHand());
 		clean_up.addAll(dealer.clearHand());
@@ -269,26 +271,42 @@ public class Blackjack{
 			c = clean_up.remove(0);
 			d.returnCard(c);
 		}
-
-		u.addMoney( (bet * multiplier) );	
+		
+		if ( winnings == u.bet ) {
+			System.out.println( "Your $" + winnings + " has been returned" );
+			u.addMoney( winnings );	
+		} else if ( winnings > 0 ) {
+			System.out.println( "You won $" + winnings );
+			u.addMoney( winnings );
+		} else {
+			System.out.println( "You lost $" + winnings * -1 );
+		}
+		u.bet = 0;
 		System.out.println( "You now have $" + u.showBank() + "\n" );	
+		
 		
 		return d;
 	}
 	
 	
-	public static boolean playAgain() {
+	public static boolean playAgain( BlackjackPlayer u ) {
 		Scanner kb = new Scanner(System.in);
 		String choice;
-		while ( true ) {
-			System.out.print ( "Would you like to play again? (y/n)\n> " );
-			choice = kb.next();
-			if ( choice.equalsIgnoreCase("n") || choice.equalsIgnoreCase("no") )
-				return false;
-			else if ( choice.equalsIgnoreCase("y") || choice.equalsIgnoreCase("yes") )
-				return true;
-			else
-				System.out.println( "Error...please try again." );
+		
+		if ( u.hasMoney() ) {
+			while ( true ) {
+				System.out.print ( "Would you like to play again? (y/n)\n> " );
+				choice = kb.next();
+				if ( choice.equalsIgnoreCase("n") || choice.equalsIgnoreCase("no") )
+					return false;
+				else if ( choice.equalsIgnoreCase("y") || choice.equalsIgnoreCase("yes") )
+					return true;
+				else
+					System.out.println( "Error...please try again." );
+			}
+		} else {
+			System.out.println( "You're all out of money. We're cutting you off." );
+			return false;
 		}
 	}
 	
