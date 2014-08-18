@@ -1,10 +1,11 @@
 import java.util.Scanner;
 
 public class BlackjackPlayer extends CardPlayer {
-	private int wallet = 500;	
+	public int bet;
+	private int wallet;	
 	
 	BlackjackPlayer(String n) {
-		this.wallet = 500;
+		this.wallet = 150;
 		this.name = n;
 	}
 	
@@ -46,32 +47,6 @@ public class BlackjackPlayer extends CardPlayer {
 		System.out.println( this.name + "'s total is " + this.findTotal() );
 	}
 	
-// 	public int makeBet() {
-// 		Scanner keyboard = new Scanner(System.in);
-// 		int bet = -1;
-// 		boolean bError = true;
-// 		
-// 		while (true) {
-// 			while (bError) {
-// 				 try {
-// 					System.out.println( "You currently have $" + this.wallet );	
-// 					System.out.print( "Bet: (min 5 max 100 increment of 5)\n> " );
-// 					bet = Integer.parseInt(keyboard.nextLine());
-// 					bError = false;
-// 
-// 				} catch (Exception e) {
-// 					System.out.println( "Error...please try a number.\n" );
-// 				}
-// 			}
-// 			
-// 			if ( bet < 5 || bet > 100 || bet > this.wallet || bet % 5 != 0) {
-// 				System.out.println( "You cannot bet $" + bet + "...please try again.\n" );
-// 				bError = true;
-// 			} else
-// 				return bet;		
-// 		}
-// 	}
-
 	public int wagerBet(String s) {
 		boolean errorCheck = true;
 		int bet = this.wallet + 1;
@@ -96,6 +71,11 @@ public class BlackjackPlayer extends CardPlayer {
 			
 	}		
 	
+	public int hit( Card c ) {
+		this.addCard(c);
+		System.out.println( "\nYou drew a " + c + "." );
+		return this.findTotal();
+	}
 	
 	public void removeMoney( int amount ) {
 		this.wallet -= amount;
@@ -111,6 +91,27 @@ public class BlackjackPlayer extends CardPlayer {
 	
 	public int showBank() {
 		return this.wallet;
+	}
+	
+	// Should probably live in Blackjack class
+	public void showOptions(int round) {
+		this.standardOptions();
+		
+		if (round == 1) {	
+			// add split if time permits
+// 			if (this.hand.get(0).value == this.hand.get(1).value) {
+// 				//can split
+// 				System.out.print( " or \"split\"" );
+// 			}
+			// can double down
+			System.out.print( " or \"double down\"" );
+		}
+		
+		System.out.println( "?" );		
+			
+	}
+	public void standardOptions() {
+		System.out.print( "Would you like to \"hit\" or \"stay\"" );
 	}
 
 // Testing findTotal to make sure A scales between 1 and 11			
@@ -154,4 +155,49 @@ public class BlackjackPlayer extends CardPlayer {
 //  	}
 // 
 // 	
+// 		// Testing player options
+// 		BlackjackPlayer u = new BlackjackPlayer("nick");
+// 		Deck d = new Deck(1);
+// 		for ( int i = 0; i < 2; i++ )
+// 			u.addCard(d.dealCard());
+// 
+// 		int u_total = u.findTotal();
+// 		String choice = "";
+// 		Scanner kb = new Scanner(System.in);
+// 		Card c;
+// 		int phase = 1;
+// 		
+// 		while ( u_total <= 21 && ! choice.equalsIgnoreCase("stay") ) {
+// 			u.showHandAndTotal();
+// 			u.showOptions(phase);
+// 			System.out.print( "> " );
+// 			choice = kb.next();
+// 		
+// 			if ( choice.equalsIgnoreCase("hit") ) {
+// 				c = d.dealCard();
+// 				System.out.println( "\nYou drew a " + c + ".\n" );
+// 				u.addCard(c);
+// 				u_total = u.findTotal();					
+// 			} else if ( choice.equalsIgnoreCase("double down") || choice.equalsIgnoreCase("dd") ) {
+// 				String line;
+// 				int bet;
+// 				System.out.println( "Another bet..." );
+// 				System.out.print( "> " );
+// 				kb.nextLine();
+// 				line = kb.nextLine();
+// 				bet = u.wagerBet(line);
+// 				u.bet += bet;
+// 				c = d.dealCard();
+// 				u.addCard(c);
+// 				choice = "stay";
+// 			
+// 			} else if ( !choice.equalsIgnoreCase("stay") ) {
+// 				System.out.println( "Error...please try again." );
+// 			}	
+// 			phase++;
+// 		}
+// 		System.out.println( u.bet );
+// 		u.showHandAndTotal();
+// 	}
+// 
 }
