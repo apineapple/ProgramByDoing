@@ -33,16 +33,12 @@ public class Blackjack{
 			dealer_total = dealer.findTotal();
 		
 			// Check to see if either player received Blackjack
-			if ( checkForBJ(user_total, dealer_total) ) {		
-				pay_out_multiplier = resolveBJ(user_total, dealer_total);
-				if ( pay_out_multiplier != 0 ) {
-					System.out.println ( "Dealer had " + dealer.hand + "\n");	
-					d = finishRound( d, user, dealer, pay_out_multiplier );
-					replay = playAgain(user);
-					continue;
-				} else {
-					pay_out_multiplier = 0;
-				}
+			pay_out_multiplier = resolveBJ(user_total, dealer_total);
+			if ( pay_out_multiplier != 0 ) {
+				System.out.println ( "Dealer had " + dealer.hand + "\n");	
+				d = finishRound( d, user, dealer, pay_out_multiplier );
+				replay = playAgain(user);
+				continue;
 			}
 			
 			// To slow the text bombardment
@@ -86,7 +82,10 @@ public class Blackjack{
 	
 	
 	
-	// Take a bet
+	/** 
+	 * Takes a string input from user and passes it through until a valid bet is reached
+	 * Will remove money from player's wallet and store it in their bet variable
+	 */
 	public static void takeBet(BlackjackPlayer u) { 
 		int bet = 0;
 		Scanner kb = new Scanner(System.in);
@@ -107,13 +106,14 @@ public class Blackjack{
 
 	}
 	
+	// This is the current betting limitations
 	private static boolean allowedBet( int bet ) {
 		return ( bet < 5 || bet > 100 || bet % 5 != 0 );
 	}
 	
 	/** 
 	 * Shuffles the deck and deals two cards to each player
-	 *
+	 * Displays the initial deal afterwards
 	 */
 	public static void initializeRound( Deck d, BlackjackPlayer u, BlackjackPlayer dealer ) {
 		int i;
@@ -124,7 +124,7 @@ public class Blackjack{
 // 			dealer.hand.add(new Card("A", "S", 10));
 // 			dealer.hand.add(new Card("J", "S", 10));
 // 			u.hand.add(new Card("A", "S", 1));
-//  			u.hand.add(new Card("J", "S", 10));
+//  		u.hand.add(new Card("J", "S", 10));
 
 		// Deals 2 cards from top of deck to the players
 		for (i = 0; i < 2; i++ )
@@ -140,13 +140,9 @@ public class Blackjack{
 	
 	/**
 	 * Used after initial deal to see if a Blackjack was dealt	
-	 * This will return a payout rate of 1, 0, -1 if one was dealt 
-	 * otherwise it will return 2
+	 * This will return a payout rate of 2 (win), 1 (draw), -1 (loss) if one was dealt 
+	 * otherwise it will return 0
 	 */
-	public static boolean checkForBJ( int u_total, int d_total ) {
-		return ( u_total == 21 || d_total == 21 );
-	} 
-	 
 	public static int resolveBJ(int u_total, int d_total) {	
 		if ( u_total == 21 && d_total != 21 ) {
 			System.out.println( "*******************\n** End of Round **\n*******************\n" );
@@ -231,7 +227,7 @@ public class Blackjack{
 
 	/**
 	 * Used at the end of the round to determine the payout rate
-	 * Will return a payout rate of 1, 0, or -1
+	 * Will return a payout rate of 2 (win), 1 (draw), or -1 (loss)
 	 */ 
 	public static int checkForWin(int u_total, int d_total) {
 		if ( u_total <= 21 ) {
