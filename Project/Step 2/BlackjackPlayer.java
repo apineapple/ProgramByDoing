@@ -93,6 +93,14 @@ public class BlackjackPlayer extends CardPlayer {
 		return this.wallet;
 	}
 	
+	public void addBet( int b ) {
+		this.bet += b;
+	}
+	
+	public void clearBet() {
+		this.bet = 0;
+	}
+	
 	// Should probably live in Blackjack class
 	public void showOptions(int round) {
 		this.standardOptions();

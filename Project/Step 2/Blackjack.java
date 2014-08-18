@@ -102,7 +102,7 @@ public class Blackjack{
 		}
 		
 		u.removeMoney(bet);
-		u.bet += bet;
+		u.addBet(bet);
 
 	}
 	
@@ -278,7 +278,7 @@ public class Blackjack{
 		} else {
 			System.out.println( "You lost $" + winnings * -1 );
 		}
-		u.bet = 0;
+		u.clearBet();
 		System.out.println( "You now have $" + u.showBank() + "\n" );	
 		
 		
