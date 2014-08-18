@@ -98,7 +98,7 @@ public class Blackjack{
 			line = kb.nextLine();
 			bet = u.wagerBet(line);
 			if ( allowedBet(bet) ) 
- 				System.out.println( "Invalid bet...please try again." );
+ 				System.out.println( "Invalid bet...please try again.\n" );
  			
 		}
 		
@@ -180,19 +180,20 @@ public class Blackjack{
 			u.showHandAndTotal();
 			u.showOptions(phase);
 			System.out.print( "> " );
-			choice = kb.next();
+			choice = kb.nextLine();
 		
 			if ( choice.equalsIgnoreCase("hit") ) {
 				c = d.dealCard();
 				u_total = u.hit(c);					
-			} else if ( choice.equalsIgnoreCase("double down") || choice.equalsIgnoreCase("dd") ) {
+			} else if ( (choice.equalsIgnoreCase("double down") || choice.equalsIgnoreCase("dd")) && phase == 1 ) {
 				takeBet(u);
 				c = d.dealCard();
 				u_total = u.hit(c);
 				u.showHandAndTotal();
 				choice = "stay";			
 			} else if ( !choice.equalsIgnoreCase("stay") ) {
-				System.out.println( "Error...please try again." );
+				System.out.println( "Error...please try again.\n" );
+				phase--;
 			}	
 			
 			phase++;
