@@ -4,8 +4,8 @@ public class BlackjackPlayer extends CardPlayer {
 	public int bet;
 	private int wallet;	
 	
-	BlackjackPlayer(String n) {
-		this.wallet = 500;
+	BlackjackPlayer(String n, int bank) {
+		this.wallet = bank;
 		this.name = n;
 	}
 	
@@ -40,11 +40,13 @@ public class BlackjackPlayer extends CardPlayer {
 		return current_total;
 	}
 
-		
+	public void showHand() {
+		System.out.println( this.name + " has " + this.hand );
+	}	
 	// Displays Player's hand and Total
 	public void showHandAndTotal() {
-		System.out.println( this.name + " has " + this.hand );
-		System.out.println( this.name + "'s total is " + this.findTotal() );
+		this.showHand();
+		System.out.println( this.name + "'s total is " + this.findTotal() + "\n" );
 	}
 	
 	public int wagerBet(String s) {
@@ -73,7 +75,7 @@ public class BlackjackPlayer extends CardPlayer {
 	
 	public int hit( Card c ) {
 		this.addCard(c);
-		System.out.println( "\nYou drew a " + c + "." );
+		System.out.println( "\nYou drew a " + c + ".\n" );
 		return this.findTotal();
 	}
 	

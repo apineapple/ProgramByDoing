@@ -6,7 +6,7 @@ public class Blackjack{
 	
 	public static void main( String[] args ) {
 		
-		BlackjackPlayer dealer = new BlackjackPlayer("Dealer");
+		BlackjackPlayer dealer = new BlackjackPlayer("Dealer", 500);
 		Deck d = new Deck(1);
 		Scanner kb = new Scanner(System.in);
 		String user_name = "nick", choice = "";
@@ -19,7 +19,7 @@ public class Blackjack{
 		System.out.println( "Welcome to Blackjack\n" );
  		System.out.print( "What is your name? \n> " );
  		user_name = kb.nextLine();
-		BlackjackPlayer user = new BlackjackPlayer(user_name);
+		BlackjackPlayer user = new BlackjackPlayer(user_name, 500);
 		
 		while ( replay && user.hasMoney() ) {
 		
@@ -49,22 +49,30 @@ public class Blackjack{
 			System.out.println( "\n*****************\n** " + user.name + "'s turn **\n*****************\n" );
 			user_total = userTurn(d, user);		
 		
-			System.out.println( "\n" + user.name + " ends the round with " + user_total + ".\n" );
+			System.out.println( user.name + " ends the round with " + user_total + ".\n" );
 
 
 			// dealer's turn
 			// dealer will only play if user has not busted			
 			if ( user_total <= 21 ) { 
 				// To slow the text bombardment
-				System.out.print( "On to the dealer's turn..." );
+				System.out.print( "On to the dealer's turn. Press enter to continue..." );
 				kb.nextLine();
 
 				System.out.println( "\n*******************\n** " + dealer.name + "'s turn **\n*******************\n" );
+				dealer.showHandAndTotal();
 				dealer_total = dealerTurn( d, dealer, user_total );
+			} else {
+				dealer.showHand();
 			}
-
 			System.out.println( dealer.name + " ends the round with " + dealer_total + ".\n" );
-			System.out.println( "******************\n** End of Round **\n******************\n" );
+
+			// To slow the text bombardment
+			System.out.print( "Press enter to find out the results of this round..." );
+			kb.nextLine();
+
+
+			System.out.println( "\n******************\n** End of Round **\n******************\n" );
 
 			// Determine the winner and reload the deck
 			pay_out_multiplier = checkForWin( user_total, dealer_total );
@@ -76,7 +84,7 @@ public class Blackjack{
 		}
 		
 		if ( user.hasMoney() )
-			System.out.println( "Quitting while you've still got some money, huh? Come back soon!" );
+			System.out.println( "\nQuitting while you've still got some money, huh? Come back soon!" );
 			
 	}
 	
@@ -133,7 +141,7 @@ public class Blackjack{
 			u.addCard(d.dealCard());
 
 		u.showHandAndTotal();
-		System.out.println( "\n=-=-=-=-=-=-=-=-=-=-=--=-=\n\n" + dealer.name + " has [" + dealer.hand.get(0) + ", **]" );
+		System.out.println( "=-=-=-=-=-=-=-=-=-=-=--=-=\n\n" + dealer.name + " has [" + dealer.hand.get(0) + ", **]" );
 		System.out.println( dealer.name + "'s total is hidden.\n" );
 			
 	}
@@ -145,15 +153,15 @@ public class Blackjack{
 	 */
 	public static int resolveBJ(int u_total, int d_total) {	
 		if ( u_total == 21 && d_total != 21 ) {
-			System.out.println( "*******************\n** End of Round **\n*******************\n" );
+			System.out.println( "\n*******************\n** End of Round **\n*******************\n" );
 			System.out.println( "You got Blackjack! You win this round.\n" );
 			return 2;
 		} else if ( u_total == 21 && d_total == 21 ) {
-			System.out.println( "*******************\n** End of Round **\n*******************\n" );
+			System.out.println( "\n*******************\n** End of Round **\n*******************\n" );
 			System.out.println( "You both got Blackjack. The round is a draw.\n" );		
 			return 1;
 		} else if ( d_total == 21 ) {
-			System.out.println( "*******************\n** End of Round **\n*******************\n" );
+			System.out.println( "\n*******************\n** End of Round **\n*******************\n" );
 			System.out.println( "Dealer got Blackjack. You lose this round.\n" );		
 			return -1;
 		} else {
@@ -180,20 +188,25 @@ public class Blackjack{
 		
 			if ( choice.equalsIgnoreCase("hit") ) {
 				c = d.dealCard();
-				u_total = u.hit(c);					
+				u_total = u.hit(c);
 			} else if ( (choice.equalsIgnoreCase("double down") || choice.equalsIgnoreCase("dd")) && phase == 1 ) {
+				System.out.print( "You much make an additional bet. " );
 				takeBet(u);
 				c = d.dealCard();
 				u_total = u.hit(c);
-				u.showHandAndTotal();
 				choice = "stay";			
 			} else if ( !choice.equalsIgnoreCase("stay") ) {
 				System.out.println( "Error...please try again.\n" );
 				phase--;
-			}	
+			} else {
+				System.out.println();	
+			}
 			
 			phase++;
 		}
+
+		u.showHand();
+				
 		return u_total;
 	}
 	
@@ -201,27 +214,42 @@ public class Blackjack{
 		int d_total = dealer.findTotal();
 		String choice = "";
 		Card c;
-			
-		while ( d_total <= 21 && ! choice.equals("stay") ) {
-			// Dealer will hit until it has 17 or greater
-			dealer.showHandAndTotal();
+		//Standard dealer hits on 16 or less and stays on 17 or more
+		while ( d_total <= 21 && choice != "stay"  ) {
 			if ( d_total < 17 ) {
-				if ( d_total <= u_total && u_total <= 21 ) { 
-					choice = "hit";
-					c = d.dealCard();
-					System.out.println( "\nDealer chooses to hit.\nHe draws a " + c + ".\n" );
-					dealer.addCard(c);
-					d_total = dealer.findTotal();
-				} else {
-					choice = "stay";
-					System.out.println( "Dealer stays.\n" );
-				}
+				choice = "hit";
+				c = d.dealCard();
+				System.out.println( "Dealer chooses to hit.\nHe draws a " + c + ".\n" );
+				dealer.addCard(c);
+				d_total = dealer.findTotal();
 			} else {
 				choice = "stay";
 				System.out.println( "Dealer stays.\n" );
 			}
 		}
+
+		// Aggressive dealer to win it all	
+// 		while ( d_total <= 21 && ! choice.equals("stay") ) {
+// 			// Dealer will hit until it has 17 or greater
+// 			dealer.showHandAndTotal();
+// 			if ( d_total < 17 ) {
+// 				if ( d_total <= u_total && u_total <= 21 ) { 
+// 					choice = "hit";
+// 					c = d.dealCard();
+// 					System.out.println( "\nDealer chooses to hit.\nHe draws a " + c + ".\n" );
+// 					dealer.addCard(c);
+// 					d_total = dealer.findTotal();
+// 				} else {
+// 					choice = "stay";
+// 					System.out.println( "Dealer stays.\n" );
+// 				}
+// 			} else {
+// 				choice = "stay";
+// 				System.out.println( "Dealer stays.\n" );
+// 			}
+// 		}
 		
+		dealer.showHand();
 		return d_total;
 	}
 
